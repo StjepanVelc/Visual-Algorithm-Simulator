@@ -41,7 +41,7 @@ def ensure_db() -> Path | None:
     """Check if database exists and show warning if not."""
     db_path, _ = resolve_paths()
     if not db_path.exists():
-        tk.messagebox.showwarning("ADT", "Database does not exist. Create it first.")
+        messagebox.showwarning("ADT", "Database does not exist. Create it first.")
         return None
     return db_path
 
@@ -78,7 +78,7 @@ def format_node_details(row: dict) -> str:
 
 def confirm_delete(parent: tk.Misc, title: str, description: str) -> bool:
     """Show delete confirmation dialog."""
-    return tk.messagebox.askyesno(
+    return messagebox.askyesno(
         "Delete confirmation",
         f"{title}\n\n{description}\n\nAre you sure you want to delete this node?",
         parent=parent,

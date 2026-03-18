@@ -24,6 +24,14 @@ It uses a layered architecture (presentation -> services -> data), with a Tkinte
 
 - app.py: application entry point
 - presentation/: GUI layer
+	- gui.py: application UI entry/composition layer
+	- views/: per-view UI modules (Hash, BST, Recursion, General Tree)
+	- studio/: Visual Studio sidebar/capture composition helpers
+	- forms/: CRUD dialogs for each structure
+	- canvas/: rendering, layout, traversal, interaction utilities
+	- recording/: frame capture and export helpers
+	- db_operations.py: create/export/import/report actions
+	- utils.py: shared GUI utilities
 - services/: application/service layer
 - data/: repository and schema layer
 - tests/: automated tests
@@ -75,6 +83,7 @@ Note: Running Tkinter GUI in Docker requires additional display setup (X11/WSLg)
 
 ## Architecture Notes
 
+- The presentation layer is split into focused modules (views, studio, forms, canvas, recording).
 - The presentation layer does not access the database directly.
 - The services layer provides a stable API for GUI and tests.
 - The data layer owns SQL operations and data integrity rules.
