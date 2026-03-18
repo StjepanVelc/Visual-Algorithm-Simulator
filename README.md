@@ -1,49 +1,72 @@
 # Visual Algorithm Simulator
 
-Visual Algorithm Simulator is a desktop app for exploring and editing core data structures.
-It uses a layered architecture (presentation -> services -> data), with a Tkinter UI and SQLite persistence.
+Visual Algorithm Simulator now supports two interfaces over the same core logic:
+
+- Desktop UI (Tkinter)
+- Web UI (React + Konva) with FastAPI backend
+
+The project keeps a layered architecture:
+
+- presentation -> services -> data
 
 ## Features
 
-- Hash table visualization and chaining operations
-- Recursion call-tree visualization
-- Integrated CRUD in Visual Studio (add, update, delete across structures)
-- General tree and Binary Search Tree (BST) step-based traversal simulation
-- Animated traversal/export workflow (GIF/MP4)
-- SQL export/import and HTML state report generation
+- Binary Search Tree (insert, delete, traversals, step animation)
+- General Tree traversal visualization
+- Hash table visualization and operations
+- Recursion tree simulation
+- Database management and reporting helpers
+- Plugin-ready frontend algorithm registry for future extensions
 
 ## Tech Stack
 
 - Python 3.x
-- Tkinter (GUI)
+- FastAPI + Uvicorn
+- React + Vite + Zustand + React Konva
+- Tkinter (desktop mode)
 - SQLite
-- unittest / pytest
-- Pillow, imageio, imageio-ffmpeg (capture/export)
+- pytest / unittest
 
 ## Project Structure
 
-- app.py: application entry point
-- presentation/: GUI layer
-	- gui.py: application UI entry/composition layer
-	- views/: per-view UI modules (Hash, BST, Recursion, General Tree)
-	- studio/: Visual Studio sidebar/capture composition helpers
-	- forms/: CRUD dialogs for each structure
-	- canvas/: rendering, layout, traversal, interaction utilities
-	- recording/: frame capture and export helpers
-	- db_operations.py: create/export/import/report actions
-	- utils.py: shared GUI utilities
-- services/: application/service layer
-- data/: repository and schema layer
+- app.py: desktop entry point
+- backend/: FastAPI app and API routers
+- frontend/: React simulator client
+- services/: business logic layer
+- data/: repositories and schema layer
+- presentation/: desktop GUI modules
 - tests/: automated tests
-- izvjestaji/: generated HTML reports
 
-## Local Setup
+## Local Development
+
+### 1. Backend setup
 
 ```powershell
 python -m venv .venv
 & .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
+```
+
+### 2. Run web backend
+
+```powershell
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+```
+
+### 3. Run web frontend
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:3000.
+
+### 4. Run desktop app (optional)
+
+```powershell
 python app.py
 ```
 
@@ -53,45 +76,48 @@ python app.py
 pytest -q
 ```
 
-Alternative without pytest:
+Alternative:
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-## Docker
+## Docker (Single Dockerfile)
 
-Build image:
+This repository uses one root Dockerfile that:
+
+- builds the React frontend
+- installs Python backend dependencies
+- serves API + built frontend from FastAPI on port 8000
+
+Build:
 
 ```powershell
 docker build -t visual-algorithm-simulator .
 ```
 
-Run tests in container:
+Run:
 
 ```powershell
-docker run --rm visual-algorithm-simulator
+docker run --rm -p 8000:8000 visual-algorithm-simulator
 ```
 
-Run another command (example):
+Open http://localhost:8000.
+
+Optional with compose:
 
 ```powershell
-docker run --rm -it visual-algorithm-simulator python app.py
+docker compose up --build
 ```
 
-Note: Running Tkinter GUI in Docker requires additional display setup (X11/WSLg). For local GUI work, run on the host machine.
+## Extending Algorithms (Plugin Registry)
 
-## Architecture Notes
+Frontend algorithms are registered through the registry module.
+To add a new simulator (for example AVL or Dijkstra), register a new algorithm config and provide:
 
-- The presentation layer is split into focused modules (views, studio, forms, canvas, recording).
-- The presentation layer does not access the database directly.
-- The services layer provides a stable API for GUI and tests.
-- The data layer owns SQL operations and data integrity rules.
-
-## UI Notes
-
-- Visual Studio is the primary user workflow.
-- CRUD actions are available directly from the Visual Studio sidebar.
+- load action
+- render component
+- optional traversal/playback behavior
 
 ## License
 

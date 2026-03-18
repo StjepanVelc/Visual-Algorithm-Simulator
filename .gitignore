@@ -36,3 +36,13 @@ adt.db
 # Generated reports and exports
 izvjestaji/*.html
 *.sql
+
+# Frontend (Node.js)
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env
+
+# Backend virtual env (if used)
+backend/.venv/
+backend/venv/

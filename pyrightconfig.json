@@ -1,0 +1,14 @@
+{
+    "pythonPath": ".",
+    "include": [
+        "backend",
+        "services",
+        "presentation"
+    ],
+    "exclude": [
+        "frontend",
+        "node_modules",
+        "__pycache__"
+    ],
+    "pythonVersion": "3.11"
+}

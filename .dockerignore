@@ -9,6 +9,8 @@ __pycache__
 .mypy_cache
 .ruff_cache
 htmlcov
+frontend/node_modules
+frontend/dist
 
 # Local runtime/generated files
 adt.db
