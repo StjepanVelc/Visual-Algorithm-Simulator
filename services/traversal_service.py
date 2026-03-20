@@ -7,6 +7,7 @@ def build_bst_traversal_order(rows: list[dict], mode: str, search_value: str | N
     """Build traversal order for BST based on mode (BFS, DFS, or Search)."""
     nodes = {int(row["id"]): row for row in rows}
     root_id = next((int(row["id"]) for row in rows if row.get("parent_id") is None), None)
+
     if root_id is None:
         return []
 

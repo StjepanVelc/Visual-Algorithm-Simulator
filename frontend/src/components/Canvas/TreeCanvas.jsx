@@ -1,15 +1,72 @@
 import React from 'react'
 import { Layer, Line, Stage, Circle, Text, Group, Rect } from 'react-konva'
 import { buildLevelLayout } from '../../hooks/useTreeLayout'
+import { useCanvasViewport } from '../../hooks/useCanvasViewport'
 
 const TreeCanvas = ({ rows = [], traversalId = null }) => {
     const { positions } = buildLevelLayout(rows, 140, 110)
-    const width = 1040
-    const height = 520
+    const {
+        shellRef,
+        viewport,
+        transform,
+        setTransform,
+        fitToContent,
+        zoomIn,
+        zoomOut,
+    } = useCanvasViewport(positions, {
+        nodeRadius: 40,
+        defaultHeight: 560,
+    })
 
     return (
-        <div className="canvas-shell">
-            <Stage width={width} height={height}>
+        <div className="canvas-shell" ref={shellRef}>
+            <div className="canvas-toolbar">
+                <button type="button" onClick={zoomOut}>-</button>
+                <button type="button" onClick={zoomIn}>+</button>
+                <button type="button" onClick={fitToContent}>Fit Tree</button>
+            </div>
+            <Stage
+                width={viewport.width}
+                height={viewport.height}
+                draggable
+                onDragEnd={(e) => {
+                    const pos = e.target.position()
+                    setTransform((prev) => ({ ...prev, x: pos.x, y: pos.y }))
+                }}
+                onWheel={(e) => {
+                    e.evt.preventDefault()
+                    const stage = e.target.getStage()
+                    if (!stage) {
+                        return
+                    }
+
+                    const oldScale = transform.scale
+                    const pointer = stage.getPointerPosition()
+                    if (!pointer) {
+                        return
+                    }
+
+                    const pointerLocal = {
+                        x: (pointer.x - transform.x) / oldScale,
+                        y: (pointer.y - transform.y) / oldScale,
+                    }
+
+                    const scaleBy = 1.08
+                    const direction = e.evt.deltaY > 0 ? -1 : 1
+                    const nextScaleRaw = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy
+                    const nextScale = Math.max(0.35, Math.min(2.4, nextScaleRaw))
+
+                    setTransform({
+                        scale: nextScale,
+                        x: pointer.x - pointerLocal.x * nextScale,
+                        y: pointer.y - pointerLocal.y * nextScale,
+                    })
+                }}
+                scaleX={transform.scale}
+                scaleY={transform.scale}
+                x={transform.x}
+                y={transform.y}
+            >
                 <Layer>
                     {rows.map((node) => {
                         if (node.parent_id == null) {

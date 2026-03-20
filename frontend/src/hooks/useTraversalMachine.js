@@ -12,7 +12,12 @@ export const useTraversalMachine = (order = []) => {
     const [state, setState] = useState({ ...initialState, traversalOrder: safeOrder })
 
     useEffect(() => {
-        setState({ mode: 'idle', currentStep: 0, traversalOrder: safeOrder })
+        if (safeOrder.length > 0) {
+            // Auto-play immediately when a new traversal order arrives
+            setState({ mode: 'running', currentStep: 0, traversalOrder: safeOrder })
+        } else {
+            setState({ mode: 'idle', currentStep: 0, traversalOrder: [] })
+        }
     }, [safeOrder])
 
     useEffect(() => {
@@ -58,7 +63,8 @@ export const useTraversalMachine = (order = []) => {
         setState((prev) => ({ ...prev, mode: 'idle', currentStep: 0 }))
     }
 
-    const activeStep = state.traversalOrder[state.currentStep] ?? null
+    // Null out activeStep only in idle (no traversal loaded yet / after reset)
+    const activeStep = state.mode === 'idle' ? null : (state.traversalOrder[state.currentStep] ?? null)
 
     return {
         state,

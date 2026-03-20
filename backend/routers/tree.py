@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from presentation.canvas.traversals import build_general_traversal_order
+from services.traversal_service import build_general_traversal_order
 from services.adt_service import add_general_tree_node
 
 from .shared import DB_PATH, full_state

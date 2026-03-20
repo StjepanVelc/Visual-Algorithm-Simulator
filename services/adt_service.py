@@ -28,6 +28,7 @@ from data.tree_repository import (
 )
 from services.models import AdtState
 from services.reporting import build_html_report, build_state
+from services.validation_service import TreeValidator, ValidationError
 
 
 def build_database(db_path: Path) -> None:
@@ -90,6 +91,14 @@ def add_general_tree_node(
     parent_id: int | None,
     redoslijed: int | None,
 ) -> int:
+    # Validate before adding
+    state = collect_state(db_path, "temp")
+    try:
+        value = int(vrijednost)
+        TreeValidator.validate_general_tree_insertion(state.opce_rows, value, parent_id)
+    except (ValueError, ValidationError) as e:
+        raise ValueError(str(e))
+    
     return repo_add_general_tree_node(db_path, vrijednost, parent_id, redoslijed)
 
 
@@ -112,6 +121,14 @@ def add_bst_node(db_path: Path, vrijednost: str, parent_id: int, side: str) -> i
 
 
 def insert_bst_node_auto(db_path: Path, vrijednost: str) -> dict:
+    # Validate before inserting
+    state = collect_state(db_path, "temp")
+    try:
+        value = int(vrijednost)
+        TreeValidator.validate_bst_insertion(state.bst_rows, value)
+    except (ValueError, ValidationError) as e:
+        raise ValueError(str(e))
+    
     return repo_insert_bst_node_auto(db_path, vrijednost)
 
 

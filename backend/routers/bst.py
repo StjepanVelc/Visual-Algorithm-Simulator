@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
-from presentation.canvas.traversals import build_bst_traversal_order
+from services.traversal_service import build_bst_traversal_order
 from services.adt_service import delete_bst_node as delete_bst_leaf
 from services.adt_service import insert_bst_node_auto
 
@@ -47,12 +47,19 @@ def delete_bst_node(db_id: int, value: int) -> dict:
 
 
 @router.get("/traverse/{db_id}/{method}")
-def traverse_bst(db_id: int, method: str) -> dict:
+def traverse_bst(
+    db_id: int,
+    method: str,
+    search_value: str | None = Query(default=None),
+) -> dict:
     del db_id
     try:
         state = full_state()
         mode = {"bfs": "BFS", "dfs": "DFS", "search": "BST Search"}.get(method.lower(), "BFS")
-        steps = build_bst_traversal_order(state["bst_rows"], mode)
-        return {"success": True, "method": method, "steps": steps}
+        steps = build_bst_traversal_order(state["bst_rows"], mode, search_value=search_value)
+        found = (
+            bool(steps) and mode == "BST Search" and search_value is not None
+        )
+        return {"success": True, "method": method, "steps": steps, "found": found}
     except Exception as exc:
         raise HTTPException(status_code=400, detail=str(exc))

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const RecursionBoard = ({ rows = [] }) => {
+const RecursionBoard = ({ rows = [], activeId = null, sourceId = 'bst' }) => {
     const items = Array.isArray(rows) ? rows : []
     const byId = new Map(items.map((n) => [n.id, n]))
 
@@ -13,10 +13,15 @@ const RecursionBoard = ({ rows = [] }) => {
 
     return (
         <div className="call-flow">
+            <div className="variant-card recursion-source-card">
+                <p>Recursion source: <strong>{sourceId.toUpperCase()}</strong></p>
+                <p>Aktivni call: <strong>{activeId ?? '-'}</strong></p>
+            </div>
             {items.map((call) => {
                 const depth = depthOf(call)
+                const active = Number(call.id) === Number(activeId)
                 return (
-                    <article key={call.id} className="call-card" style={{ marginLeft: `${depth * 24}px` }}>
+                    <article key={call.id} className={`call-card ${active ? 'call-card-active' : ''}`} style={{ marginLeft: `${depth * 24}px` }}>
                         <div className="call-head">
                             <strong>{call.oznaka}</strong>
                             <span>#{call.id}</span>

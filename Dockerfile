@@ -21,8 +21,6 @@ RUN pip install --no-cache-dir --upgrade pip \
 COPY backend ./backend
 COPY data ./data
 COPY services ./services
-COPY presentation ./presentation
-COPY app.py ./app.py
 
 COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 

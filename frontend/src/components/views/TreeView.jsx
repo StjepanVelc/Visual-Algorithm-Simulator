@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import TreeCanvas from '../Canvas/TreeCanvas'
 import PlaybackControls from '../Controls/PlaybackControls'
 import { useTraversalMachine } from '../../hooks/useTraversalMachine'
@@ -8,7 +8,7 @@ const traversalFromOutput = (output) => (output && Array.isArray(output.steps) ?
 const TreeView = ({ rows, output, onInsert, onTraverseBfs, onTraverseDfs }) => {
     const [parentId, setParentId] = useState('-1')
     const [value, setValue] = useState('')
-    const steps = traversalFromOutput(output)
+    const steps = useMemo(() => traversalFromOutput(output), [output])
     const machine = useTraversalMachine(steps)
 
     return (

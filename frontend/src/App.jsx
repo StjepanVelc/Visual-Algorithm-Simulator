@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { useStore } from './store'
 import './App.css'
-import { ensureDefaultAlgorithms } from './algorithms/defaults'
+import { ensureDefaultAlgorithms } from './algorithms/defaults.jsx'
 import { getRegisteredAlgorithms } from './algorithms/registry'
 
 ensureDefaultAlgorithms()
+
+const initialDebugMode = () => {
+    if (typeof window === 'undefined') {
+        return false
+    }
+    const saved = window.localStorage.getItem('vas:debug-mode')
+    if (saved != null) {
+        return saved === 'true'
+    }
+    return Boolean(import.meta.env.DEV)
+}
 
 const App = () => {
     const {
@@ -20,6 +31,7 @@ const App = () => {
         hashState,
         treeState,
         recursionState,
+        advancedTreeStates,
         loadBSTState,
         insertBSTNode,
         deleteBSTNode,
@@ -30,6 +42,12 @@ const App = () => {
         loadTreeState,
         insertTreeNode,
         traverseTree,
+        loadAdvancedTreeState,
+        insertAdvancedTreeValue,
+        deleteAdvancedTreeValue,
+        searchAdvancedTreeValue,
+        traverseAdvancedTree,
+        resetAdvancedTree,
         loadRecursionState,
         insertRecursionNode,
         listDatabases,
@@ -39,6 +57,7 @@ const App = () => {
 
     const [backendConnected, setBackendConnected] = useState(false)
     const [output, setOutput] = useState(null)
+    const [debugMode, setDebugMode] = useState(initialDebugMode)
     const algorithms = getRegisteredAlgorithms()
 
     const pluginContext = {
@@ -48,6 +67,7 @@ const App = () => {
         hashState,
         treeState,
         recursionState,
+        advancedTreeStates,
         loadBSTState,
         insertBSTNode,
         deleteBSTNode,
@@ -58,6 +78,12 @@ const App = () => {
         loadTreeState,
         insertTreeNode,
         traverseTree,
+        loadAdvancedTreeState,
+        insertAdvancedTreeValue,
+        deleteAdvancedTreeValue,
+        searchAdvancedTreeValue,
+        traverseAdvancedTree,
+        resetAdvancedTree,
         loadRecursionState,
         insertRecursionNode,
         listDatabases,
@@ -66,7 +92,23 @@ const App = () => {
         lastBstInsertPath,
         lastBstDeletedId,
         lastBstDeletedNode,
+        debugMode,
     }
+
+    useEffect(() => {
+        window.localStorage.setItem('vas:debug-mode', String(debugMode))
+    }, [debugMode])
+
+    useEffect(() => {
+        const handleKey = (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                e.preventDefault()
+                setDebugMode((prev) => !prev)
+            }
+        }
+        window.addEventListener('keydown', handleKey)
+        return () => window.removeEventListener('keydown', handleKey)
+    }, [])
 
     useEffect(() => {
         const checkBackend = async () => {
@@ -113,6 +155,15 @@ const App = () => {
                     <span className={`backend-status ${backendConnected ? 'connected' : 'disconnected'}`}>
                         {backendConnected ? 'Backend Connected' : 'Backend Unavailable'}
                     </span>
+                    {debugMode && (
+                        <button
+                            type="button"
+                            className="debug-toggle active"
+                            onClick={() => setDebugMode(false)}
+                        >
+                            Debug On
+                        </button>
+                    )}
                 </div>
             </header>
 

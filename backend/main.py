@@ -12,7 +12,7 @@ project_root = Path(__file__).parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
-from backend.routers import bst, hash_table, health, recursion, system, tree
+from backend.routers import advanced_trees, bst, hash_table, health, recursion, system, tree
 
 app = FastAPI(title="Algorithm Simulator API", version="1.0.0")
 
@@ -31,6 +31,7 @@ app.include_router(hash_table.router)
 app.include_router(tree.router)
 app.include_router(recursion.router)
 app.include_router(system.router)
+app.include_router(advanced_trees.router)
 
 # In container/production mode we serve the built frontend from FastAPI.
 frontend_dist = project_root / "frontend" / "dist"

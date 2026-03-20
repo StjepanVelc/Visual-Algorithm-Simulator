@@ -9,6 +9,7 @@ export const useStore = create((set, get) => ({
     hashState: null,
     treeState: null,
     recursionState: null,
+    advancedTreeStates: {},
     lastBstInsertPath: [],
     lastBstDeletedId: null,
     lastBstDeletedNode: null,
@@ -73,10 +74,10 @@ export const useStore = create((set, get) => ({
         }
     },
 
-    traverseBST: async (method) => {
+    traverseBST: async (method, searchValue = null) => {
         set({ loading: true, error: null })
         try {
-            return await api.bst.traverse(get().dbId, method)
+            return await api.bst.traverse(get().dbId, method, searchValue)
         } catch (err) {
             set({ error: err.message })
             return null
@@ -157,6 +158,106 @@ export const useStore = create((set, get) => ({
         set({ loading: true, error: null })
         try {
             return await api.tree.traverse(get().dbId, method)
+        } catch (err) {
+            set({ error: err.message })
+            return null
+        } finally {
+            set({ loading: false })
+        }
+    },
+
+    loadAdvancedTreeState: async (treeType) => {
+        set({ loading: true, error: null })
+        try {
+            const result = await api.advanced.getState(treeType, get().dbId)
+            set((prev) => ({
+                advancedTreeStates: {
+                    ...prev.advancedTreeStates,
+                    [treeType]: result.data,
+                },
+            }))
+            return result
+        } catch (err) {
+            set({ error: err.message })
+            return null
+        } finally {
+            set({ loading: false })
+        }
+    },
+
+    insertAdvancedTreeValue: async (treeType, value) => {
+        set({ loading: true, error: null })
+        try {
+            const result = await api.advanced.insert(treeType, get().dbId, value)
+            set((prev) => ({
+                advancedTreeStates: {
+                    ...prev.advancedTreeStates,
+                    [treeType]: result.data,
+                },
+            }))
+            return result
+        } catch (err) {
+            set({ error: err.message })
+            return null
+        } finally {
+            set({ loading: false })
+        }
+    },
+
+    deleteAdvancedTreeValue: async (treeType, value) => {
+        set({ loading: true, error: null })
+        try {
+            const result = await api.advanced.delete(treeType, get().dbId, value)
+            set((prev) => ({
+                advancedTreeStates: {
+                    ...prev.advancedTreeStates,
+                    [treeType]: result.data,
+                },
+            }))
+            return result
+        } catch (err) {
+            set({ error: err.message })
+            return null
+        } finally {
+            set({ loading: false })
+        }
+    },
+
+    searchAdvancedTreeValue: async (treeType, value) => {
+        set({ loading: true, error: null })
+        try {
+            return await api.advanced.search(treeType, get().dbId, value)
+        } catch (err) {
+            set({ error: err.message })
+            return null
+        } finally {
+            set({ loading: false })
+        }
+    },
+
+    traverseAdvancedTree: async (treeType, method) => {
+        set({ loading: true, error: null })
+        try {
+            return await api.advanced.traverse(treeType, get().dbId, method)
+        } catch (err) {
+            set({ error: err.message })
+            return null
+        } finally {
+            set({ loading: false })
+        }
+    },
+
+    resetAdvancedTree: async (treeType) => {
+        set({ loading: true, error: null })
+        try {
+            const result = await api.advanced.reset(treeType, get().dbId)
+            set((prev) => ({
+                advancedTreeStates: {
+                    ...prev.advancedTreeStates,
+                    [treeType]: result.data,
+                },
+            }))
+            return result
         } catch (err) {
             set({ error: err.message })
             return null

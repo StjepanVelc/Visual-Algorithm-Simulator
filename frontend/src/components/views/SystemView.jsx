@@ -1,6 +1,7 @@
 import React from 'react'
+import DebugJsonPanel from '../DebugJsonPanel'
 
-const SystemView = ({ output, onListDatabases, onRebuildDatabase, onClearDatabase }) => {
+const SystemView = ({ output, onListDatabases, onRebuildDatabase, onClearDatabase, debugMode = false }) => {
     return (
         <section>
             <h2>System</h2>
@@ -10,12 +11,7 @@ const SystemView = ({ output, onListDatabases, onRebuildDatabase, onClearDatabas
                 <button onClick={onClearDatabase}>Clear Database</button>
             </div>
 
-            {output && (
-                <div className="output-block">
-                    <h3>System Response</h3>
-                    <pre>{JSON.stringify(output, null, 2)}</pre>
-                </div>
-            )}
+            {debugMode && <DebugJsonPanel title="System Response" data={output} />}
         </section>
     )
 }

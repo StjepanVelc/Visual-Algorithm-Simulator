@@ -1,13 +1,13 @@
 # Visual Algorithm Simulator
 
-Visual Algorithm Simulator now supports two interfaces over the same core logic:
+Web-based algorithm visualization platform built on a clean 3-layer architecture:
 
-- Desktop UI (Tkinter)
-- Web UI (React + Konva) with FastAPI backend
+**Architecture Layers:**
+- **Routers** (HTTP controllers in backend/routers/)
+- **Services** (business logic: algorithm implementations in services/)
+- **Data** (persistence: repositories and schema in data/)
 
-The project keeps a layered architecture:
-
-- presentation -> services -> data
+**Frontend:** React + Konva canvas + FastAPI backend
 
 ## Features
 
@@ -20,21 +20,18 @@ The project keeps a layered architecture:
 
 ## Tech Stack
 
-- Python 3.x
+- Python 3.12+
 - FastAPI + Uvicorn
-- React + Vite + Zustand + React Konva
-- Tkinter (desktop mode)
+- React 18 + Vite + Zustand + Konva.js
 - SQLite
 - pytest / unittest
 
 ## Project Structure
 
-- app.py: desktop entry point
-- backend/: FastAPI app and API routers
-- frontend/: React simulator client
-- services/: business logic layer
-- data/: repositories and schema layer
-- presentation/: desktop GUI modules
+- backend/: FastAPI app and HTTP routers (BST, AVL, B-Tree, B+ Tree, RB Tree, Hash, Recursion)
+- services/: business logic layer (canonical algorithm implementations)
+- data/: repositories and schema layer (SQLite persistence)
+- frontend/: React + Vite simulator client with canvas visualizations
 - tests/: automated tests
 
 ## Local Development
@@ -62,13 +59,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
-
-### 4. Run desktop app (optional)
-
-```powershell
-python app.py
-```
+Open http://localhost:3000 (frontend) and http://localhost:8000/api (FastAPI).
 
 ## Testing
 
@@ -109,6 +100,17 @@ Optional with compose:
 ```powershell
 docker compose up --build
 ```
+
+## Debug Mode
+
+Debug mode shows JSON state panels for inspecting algorithm state. By default, Debug mode is **hidden** from users.
+
+**Activate Debug Mode:**
+- Press `Ctrl + Shift + D` in the browser to reveal the **Debug On/Off** button
+- Click to toggle debug panel visibility
+- Press `Ctrl + Shift + D` again or click the button to deactivate
+
+Debug state is persisted in browser localStorage.
 
 ## Extending Algorithms (Plugin Registry)
 
